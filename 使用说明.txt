@@ -1,0 +1,108 @@
+Magisk Patcher CLI[cmd版本] 使用说明
+==========================
+Magisk Patcher CLI 是一个命令行版本的Magisk boot镜像修补工具，基于原版Magisk Patcher v4.1.0提取的核心功能。
+主要功能：
+- 修补Android设备的boot镜像
+- 支持多种设备架构（arm, arm64, x86, x86_64）
+- 自动提取Magisk APK中的必要文件
+- 生成修补后的boot镜像文件
+
+系统要求
+--------
+- Windows操作系统
+- Python 3以上的版本
+
+快速开始
+--------
+1. 准备工作
+   - 确保有需要修补的[boot文件]文件
+   - 准备Magisk APK文件
+   - 确认当前目录有magiskboot.exe工具
+2. 基本用法
+   - magiskpatcher_cli.py [要修补的boot镜像] --magisk [面具的apk]
+
+命令行参数详解
+--------------
+
+主要选项：
+   --magisk, -m` - Magisk APK文件路径（必需）
+   --arch, -a` - 目标设备架构，可选：arm, arm64, x86, x86_64（默认：arm64）
+   --output, -o` - 输出文件路径（默认在根目录生成magisk_[boot文件]）
+
+修补选项：
+   --no-verity` - 禁用dm-verity验证
+   --no-encrypt` - 禁用强制加密
+   --patch-vbmeta` - 修补vbmeta标志
+   --recovery` - 修补recovery镜像而不是boot镜像
+   --legacy-sar` - 传统SAR设备支持
+
+其他选项：
+   --verbose -v  详细输出模式
+   --version - 显示版本信息
+
+演示代码
+--------
+
+示例1：基本修补（arm64架构）
+magiskpatcher_cli.py [boot文件] --magisk [面具apk] --arch arm64
+
+示例2：禁用验证和加密
+magiskpatcher_cli.py [boot文件] --magisk [面具apk] --no-verity --no-encrypt
+
+示例3：修补recovery镜像
+magiskpatcher_cli.py recovery.img --magisk [面具apk] --recovery
+
+示例4：详细输出模式
+magiskpatcher_cli.py [boot文件] --magisk [面具apk] --verbose
+
+示例5：指定输出文件名
+magiskpatcher_cli.py [boot文件] --magisk [面具apk] --output "boot.img"
+
+工作流程
+--------
+1. 程序启动，检查参数和文件存在性
+2. 检测系统环境和Magisk版本
+3. 从APK中提取必要的Magisk文件
+4. 使用magiskboot工具解包boot镜像
+5. 修补ramdisk和内核
+6. 重新打包生成修补后的boot镜像
+7. 自动清理临时文件，只保留最终输出文件
+
+输出文件
+--------
+- 默认输出文件：magisk_boot.img
+- 修补完成后，程序会自动清理所有临时文件
+- 最终只保留修补后的boot镜像文件
+
+注意事项
+--------
+- 确保[boot文件]文件是原始未修改的版本
+- 使用正确的设备架构参数
+- 修补过程需要一定时间，请耐心等待
+- 建议在详细模式下运行以查看详细进度
+- 修补完成后会自动清理临时文件，保持目录整洁
+
+错误处理
+--------
+- 如果文件不存在，程序会显示错误信息并退出
+- 如果修补失败，会显示具体失败原因
+- 可以使用`--verbose`参数查看详细错误信息
+
+无法生成
+--------
+如有问题，请检查：
+1. 文件路径是否正确
+2. 设备架构是否匹配
+3. boot镜像是否为原始版本
+4. Magisk APK文件是否完整
+
+版本信息
+--------
+- 使用Magisk Patcher v4.1.0魔改
+- 作者: Little
+- github:Little114
+- github链接:  https://github.com/Little114/magisk-patch-boot
+- 酷安:Little114
+
+
+
