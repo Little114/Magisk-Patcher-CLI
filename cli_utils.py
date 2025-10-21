@@ -4,8 +4,9 @@ from os import chmod
 from sys import stderr
 
 def retTypeAndMachine():
+
     ostype = platform.system().lower()
-    if ostype.find("cygwin") >= 0:
+    if ostype.find("cygwin") >= 0:  # Support cygwin x11
         ostype = "windows"
     machine = platform.machine().lower()
     if machine == 'aarch64_be' \
@@ -19,6 +20,7 @@ def retTypeAndMachine():
     return ostype, machine
 
 def getMagiskApkVersion(fname: str) -> str | None:
+
     valid_flag = False
     magisk_ver_code = "00000"
     try:
@@ -38,8 +40,16 @@ def getMagiskApkVersion(fname: str) -> str | None:
     return magisk_ver_code
 
 def convertVercode2Ver(value: str) -> str:
+
     if isinstance(value, bytes):
-        value = value.decode('utf-8')
+        try:
+            value = value.decode('utf-8')
+        except UnicodeDecodeError:
+
+            try:
+                value = value.decode('latin-1')
+            except:
+                value = str(value)
     
     if len(value) >= 3:
         return value[0:2] + "." + value[2:3]
@@ -47,6 +57,7 @@ def convertVercode2Ver(value: str) -> str:
         return value
 
 def parseMagiskApk(apk: str, arch:["arm64", "arm", "x86", "x86_64"]="arm64", log=stderr):
+
     def archconv(a):
         ret = a
         match a:
@@ -82,10 +93,12 @@ def parseMagiskApk(apk: str, arch:["arm64", "arm", "x86", "x86_64"]="arm64", log
     try:
         with zipfile.ZipFile(apk) as z:
             for l in z.filelist:
+
                 if "stub.apk" in l.filename:
                     saveto(z.read(l), "stub.apk")
                     print("  ✓ 提取 stub.apk", file=log)
                 
+
                 if os_type != 'windows':
                     if f"lib/{pp}/libmagiskboot.so" in l.filename:
                         import os
@@ -94,13 +107,15 @@ def parseMagiskApk(apk: str, arch:["arm64", "arm", "x86", "x86_64"]="arm64", log
                         chmod("bin/magiskboot", 0o755)
                         print(f"  ✓ 提取 magiskboot (平台: {pp})", file=log)
 
+
                 if f"lib/{arch}/libmagiskinit.so" in l.filename:
+
                     try:
                         saveto(z.read(f"lib/{archto32(arch)}/libmagisk32.so"), "magisk32")
                         print("  ✓ 提取 magisk32", file=log)
                     except:
                         print("  ⚠ 无法提取 magisk32", file=log)
-                    
+
                     if arch in ["arm64-v8a", "x86_64"]:
                         try:
                             saveto(z.read(f"lib/{arch}/libmagisk64.so"), "magisk64")
@@ -108,6 +123,7 @@ def parseMagiskApk(apk: str, arch:["arm64", "arm", "x86", "x86_64"]="arm64", log
                         except:
                             print("  ⚠ 无法提取 magisk64", file=log)
                     
+
                     try:
                         saveto(z.read(f"lib/{arch}/libmagiskinit.so"), "magiskinit")
                         print("  ✓ 提取 magiskinit", file=log)
@@ -122,9 +138,11 @@ def parseMagiskApk(apk: str, arch:["arm64", "arm", "x86", "x86_64"]="arm64", log
     return True
 
 if __name__ == "__main__":
+
     print("Utils模块测试")
     os_type, arch = retTypeAndMachine()
     print(f"系统: {os_type}, 架构: {arch}")
     
+
     test_ver = "26100"
     print(f"版本代码 {test_ver} -> 版本号 {convertVercode2Ver(test_ver)}")

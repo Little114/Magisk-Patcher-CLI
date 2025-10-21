@@ -101,7 +101,6 @@ magiskpatcher_cli.py [boot文件] --magisk [面具apk] --output "boot.img"
 - 使用Magisk Patcher v4.1.0魔改
 - 作者: Little
 - github:Little114
-- github链接:  https://github.com/Little114/magisk-patch-boot
 - 酷安:Little114
 
 

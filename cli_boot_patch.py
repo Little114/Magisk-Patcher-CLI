@@ -8,14 +8,17 @@ from hashlib import sha1
 from shutil import copyfile, rmtree
 
 def getsha1(filename):
+
     with open(filename, 'rb') as f:
         return sha1(f.read()).hexdigest()
 
 def cp(src, dest):
+
     if isfile(src):
         copyfile(src, dest)
 
 def rm(*files):
+
     for i in files:
         if isdir(i):
             rmtree(i)
@@ -24,12 +27,14 @@ def rm(*files):
                 unlink(i)
 
 def grep_prop(key, file) -> str:
+
     with open(file, 'r') as f:
         for i in iter(f.readline, ""):
             if key in i:
                 return i.split("=")[1].rstrip("\n")
 
 class BootPatcher(object):
+
     
     def __init__(
         self,
@@ -57,11 +62,13 @@ class BootPatcher(object):
         self.__prepare_env()
 
     def __check(self):
+
         if not isfile(self.magiskboot):
             print("- magiskboot文件不存在，无法完成初始化", file=self.log)
             return False
 
     def __prepare_env(self):
+
         bool2str = lambda x: "true" if x else "false"
         self.env = {
             "KEEPVERITY": bool2str(self.keep_verity),
@@ -72,6 +79,7 @@ class BootPatcher(object):
         }
     
     def __execv(self, cmd:list):
+
         full = [
             self.magiskboot,
             *cmd
@@ -90,14 +98,25 @@ class BootPatcher(object):
                             env=self.env,
                             creationflags=creationflags,
                             )
-        logging.info(ret.stdout.decode())
-        return ret.returncode, ret.stdout.decode()
+
+        try:
+            decoded_output = ret.stdout.decode('utf-8')
+        except UnicodeDecodeError:
+            try:
+                decoded_output = ret.stdout.decode('latin-1')
+            except:
+                decoded_output = str(ret.stdout)
+        
+        logging.info(decoded_output)
+        return ret.returncode, decoded_output
     
     def patch(self, bootimg:str) -> bool:
+
         if not isfile(bootimg):
             print("- boot 镜像不存在", file=self.log)
             return False
         
+
         print("- 解包boot镜像...", file=self.log)
         err, ret = self.__execv(["unpack", bootimg])
         logging.info(ret)
@@ -126,21 +145,22 @@ class BootPatcher(object):
 
         sha = ""
         match (status & 3):
-            case 0:
+            case 0: 
                 print("- 检测到原始未修改的boot镜像", file=self.log)
                 sha = getsha1(bootimg)
                 cp(bootimg, "stock_boot.img")
                 cp("ramdisk.cpio", "ramdisk.cpio.orig")
-            case 1:
+            case 1: 
                 print("- 检测到经过magisk修补过的boot镜像", file=self.log)
                 err, ret = self.__execv(["cpio", "ramdisk.cpio", "extract .backup/.magisk config.orig", "restore"])
                 cp("ramdisk.cpio", "ramdisk.cpio.orig")
                 rm("stock_boot.img")
-            case 2:
+            case 2: 
                 print("- boot镜像被未知的程序修改过", file=self.log)
                 print("- 请先将其还原之原始的boot镜像", file=self.log)
                 return False
         
+
         init = "init"
         if not (status&4) == 0:
             init = "init.real"
@@ -196,6 +216,7 @@ class BootPatcher(object):
         
         rm("ramdisk.cpio.orig", "config", "magisk32.xz", "magisk64.xz", "stub.xz")
         
+
         for dt in "dtb", "kernel_dtb", "extra":
             if isfile(dt):
                 err, _ = self.__execv([
@@ -211,6 +232,7 @@ class BootPatcher(object):
                 if err == 0:
                     print(f"- 修补boot镜像中{dt}的fstab")
         
+
         if isfile("kernel"):
             patchedkernel = False
             err, _ = self.__execv([
@@ -245,6 +267,7 @@ class BootPatcher(object):
         return True
 
     def cleanup(self):
+        """清理临时文件"""
         rmlist = [
         "magisk32", "magisk32.xz", "magisk64", "magisk64.xz", "magiskinit", "stub.apk"
         ]
@@ -253,5 +276,6 @@ class BootPatcher(object):
         self.__execv(["cleanup"])
 
 if __name__ == "__main__":
+
     print("BootPatcher模块测试")
     print(grep_prop("B", "config"))
