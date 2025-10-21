@@ -15,7 +15,7 @@ Magisk Patcher CLI 是一个命令行版本的Magisk boot镜像修补工具，�
 ### 系统要求
 
 - Windows操作系统
-- Python 3.6+
+- Python 3.8以上最好[只需要基础py环境]
 
 ### 安装
 
@@ -53,7 +53,6 @@ python magiskpatcher_cli.py boot.img --magisk magisk.apk --output "patched_boot.
 |------|------|------|--------|
 | `--magisk` | `-m` | Magisk APK文件路径（必需） | - |
 | `--arch` | `-a` | 目标设备架构 | `arm64` |
-| `--output` | `-o` | 输出文件路径 | `magisk_boot.img` |
 
 ### 修补选项
 
@@ -85,14 +84,13 @@ python magiskpatcher_cli.py boot.img --magisk magisk.apk --output "patched_boot.
 ## 📁 文件结构
 
 ```
-Magisk-Patcher-CLI/
+root/
 ├── magiskpatcher_cli.py      # 主程序
 ├── cli_boot_patch.py         # boot镜像修补核心模块
 ├── cli_utils.py              # 工具函数模块
-├── magiskboot.exe            # Magisk boot工具（Windows）
+├── magiskboot.exe            # Magisk boot工具
 ├── 启动.bat                   # Windows启动脚本
 ├── 使用说明.txt               # 详细使用说明
-└── README.md                 # 项目说明文档
 ```
 
 ## 🐛 故障排除
@@ -121,10 +119,6 @@ Magisk-Patcher-CLI/
 - 使用`--verbose`参数可以查看详细的调试信息
 - 修补失败时会显示具体失败原因
 
-## 🤝 贡献
-
-欢迎提交Issue和Pull Request来改进这个项目！
-
 ## 📄 许可证
 
 本项目基于原版Magisk Patcher v4.1.0，遵循相应的开源协议。
@@ -132,22 +126,6 @@ Magisk-Patcher-CLI/
 ## 👥 作者
 
 - **Little** - 项目开发者
-- GitHub: [@Little114](https://github.com/Little114)
 - 酷安: Little114
 
-## 🔗 相关链接
 
-- [原版Magisk Patcher项目](https://github.com/Little114/magisk-patch-boot)
-- [Magisk官方项目](https://github.com/topjohnwu/Magisk)
-
-## 📞 支持
-
-如果您在使用过程中遇到问题，请：
-
-1. 查看本文档的故障排除部分
-2. 查看项目中的使用说明.txt文件
-3. 在GitHub上提交Issue
-
----
-
-⭐ 如果这个项目对您有帮助，请给个Star支持一下！
