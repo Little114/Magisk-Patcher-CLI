@@ -51,7 +51,7 @@ python magiskpatcher_cli.py boot.img --magisk magisk.apk --output "patched_boot.
 
 | 参数 | 缩写 | 描述 | 默认值 |
 |------|------|------|--------|
-| `--magisk` | `-m` | Magisk APK文件路径（必需） | `自己找` |
+| `--magisk` | `-m` | Magisk APK文件路径（必需） | 自己找apk |
 | `--arch` | `-a` | 目标设备架构 | `arm64` |
 
 ### 修补选项
