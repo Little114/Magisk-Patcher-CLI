@@ -85,7 +85,8 @@ class MagiskPatcherCLI:
         
         print("正在清理之前的临时文件...")
         temp_files = ["new-boot.img", "stock_boot.img", "ramdisk.cpio", "ramdisk.cpio.orig", 
-                     "kernel", "config", "debug_nt", "magisk32", "magisk64", "magiskinit", "stub.apk"]
+                     "kernel", "config", "debug_nt", "magisk32", "magisk64", "magiskinit", "stub.apk"
+                      ,"config.orig","cpio","magisk32.xz","magisk64.xz","stub.xz"]
         for temp_file in temp_files:
             if os.path.isfile(temp_file):
                 try:
